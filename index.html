@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>The kMeaning of Life</title>
+
+
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    (function() {
+        var s = document.createElement('script'), t = document.getElementsByTagName('script')[0];
+        s.type = 'text/javascript';
+        s.async = true;
+        s.src = 'http://api.flattr.com/js/0.6/load.js?mode=auto';
+        t.parentNode.insertBefore(s, t);
+    })();
+/* ]]> */</script>
+
+
+
+	</head>
+	<body>
+		<div width="100%", height="100%">
+			<h1>The k-Meaning of Life</h1>
+			<p> Der Clustering Algorithmus k-Means</p> 
+			<p> Datenpunkte, und Prototypen mit Klick setzen, und dann start dr&uuml;cken. </p>
+			<script src="http://d3js.org/d3.v2.js"></script>
+			<button id="start">start</button>
+			<button id="clear">clear</button>
+<br/>
+<br/>
+			<form action="" id="dataType">
+				<input type="RADIO" name="dataType" value="points" checked="true">add datapoints <br/>
+				<input type="RADIO" name="dataType" value="centroids">add centroids
+			</form>
+			<span> </span>
+
+
+
+<a class="FlattrButton" style="display:none;" rev="flattr;button:compact;" href="http://bastinat0r.de/kmeans/"></a>
+<noscript><a href="http://flattr.com/thing/1098089/The-k-Meaning-of-Life" target="_blank">
+<img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" /></a></noscript> 
+
+
+
+		</div>
+		<script type="text/javascript">
+
+var width = 1000;
+var height = 1000;
+var dataPoints = [[100,100],[200,200]];
+var centroids = [[300,300,0]];
+
+var svg = d3.select("span")
+	.append("svg")
+		.attr("height", "100%")
+		.attr("width", "100%")
+		.attr("style", "border-width: 1px; border-color: #999; border-style: solid");
+
+
+function getX(d) {
+	return d[0];
+}
+
+function getY(d) {
+	return d[1];
+}
+
+function getR(d) {
+	if(d[2] != null)
+		return 10;
+	return 5;
+}
+
+function getOpacity(d) {
+	if(d[2] != null) {
+		return 0.5;
+	}
+	return 1.0;
+}
+
+var colorByIndex = d3.scale.category10();
+
+function getColor(d) {
+	return colorByIndex(getNextCentroid(d) + 1);
+}
+
+var animation = null;
+
+animateNewData();
+
+function animateNewData() {
+	var circles = d3.select("svg").selectAll("circle").data(dataPoints, function(d) {return JSON.stringify(d)}).enter().append("circle");
+	circles.attr("cx", getX)
+		.attr("cy", getY)
+		.attr("r", getR)
+		.style("fill", "#000")
+		.style("opacity", getOpacity);
+	
+	var centroidCircles = d3.select("svg").selectAll("circle").data(centroids, function(d) { return d[2];}).enter().append("circle");
+	centroidCircles.attr("cx", getX)
+		.attr("cy", getY)
+		.attr("r", 10)
+		.style("fill", getColor)
+		.style("opacity", getOpacity);
+}
+
+function animate() {
+	var circles = d3.select("svg").selectAll("circle").data(dataPoints, function(d) {return JSON.stringify(d)}).enter().append("circle");
+	circles.attr("cx", getX)
+		.attr("cy", getY)
+		.attr("r", getR)
+		.style("fill", "#000")
+		.style("opacity", getOpacity);
+	
+	var centroidCircles = d3.select("svg").selectAll("circle").data(centroids, function(d) { return d[2];}).enter().append("circle");
+	centroidCircles.attr("cx", getX)
+		.attr("cy", getY)
+		.attr("r", 10)
+		.style("fill", getColor)
+		.style("opacity", getOpacity);
+
+
+	var circles = d3.select("svg").selectAll("circle");
+	
+	circles.transition().delay(0).duration(1000)
+		.attr("cx", getX)
+		.attr("cy", getY)
+		.attr("r", getR)
+	
+	circles.transition().delay(1300).duration(250)
+		.style("fill", getColor)
+		.style("opacity", getOpacity);
+	
+}
+
+function kMeans() {
+	
+	var worldList = [];
+	for(var i in centroids) {
+		worldList.push([]);
+	}
+	for(var i in dataPoints) {
+		worldList[getNextCentroid(dataPoints[i])].push(dataPoints[i]);
+	}
+	updateCentroids(worldList);
+	
+	animate();
+}
+
+function updateCentroids(worldList) {
+	console.log(JSON.stringify(worldList));
+	for(var i in worldList) {
+		if(worldList[i].length > 0) {
+			sum = [0,0]
+			for(var j in worldList[i]) {
+				sum[0] += worldList[i][j][0];
+				sum[1] += worldList[i][j][1];
+			}
+			centroids[i] = [sum[0] / worldList[i].length, sum[1] / worldList[i].length, i]
+		}
+	}
+	console.log(JSON.stringify(centroids));
+}
+
+function distance(p1, p2) {
+	return (p1[0] - p2[0]) * (p1[0] - p2[0])+ (p1[1] - p2[1]) * (p1[1] - p2[1]);
+}
+
+function getNextCentroid(p) {
+	c = 0;
+	for(var i in centroids) {
+		if(distance(centroids[i], p) < distance(centroids[c], p))
+			c = i;
+	}
+	return c;
+}
+
+d3.select("button#clear").on("click", function() {
+	colorByIndex = d3.scale.category10();
+	centroids = [];
+	dataPoints = [];
+	d3.selectAll("svg circle").remove();
+});
+
+d3.select("button#start").on("click", function() {
+	if(animation == null) {
+		d3.select("button#start").text("stop");
+		animation = setInterval(kMeans, 3000);
+		animate();
+	} else {
+		d3.select("button#start").text("start");
+		clearInterval(animation);
+		animation = null;
+	}
+});
+
+d3.select("svg").on("click", function() {
+	coords = d3.svg.mouse(this);
+	if(d3.select("form").select("input").property("checked") == true) {
+		dataPoints.push(coords);
+	}
+	else {
+		coords.push(centroids.length);
+		centroids.push(coords);
+	}
+	animateNewData();
+
+	if(animation != null) {
+		clearInterval(animation);
+		animation = setInterval(kMeans, 3000);
+		animate();
+	}
+});
+		</script>
+	</body>
+</html>
