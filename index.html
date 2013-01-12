@@ -37,7 +37,8 @@
 				<input type="RADIO" name="dataType" value="points" checked="true">add datapoints <br/>
 				<input type="RADIO" name="dataType" value="centroids">add centroids
 			</form>
-			<span> </span>
+			<span width="100%" height="100%"> </span>
+			<br/>
 
 
 
@@ -57,9 +58,10 @@ var centroids = [[300,300,0]];
 
 var svg = d3.select("span")
 	.append("svg")
-		.attr("height", "100%")
+		.attr("height", (window.innerHeight - 20) + "px")
 		.attr("width", "100%")
-		.attr("style", "border-width: 1px; border-color: #999; border-style: solid");
+		.attr("preserveAspectRatio", "none")
+		.attr("style", "border-width: 1px; border-color: #999; border-style: solid; margin-top: 20px; margin-bottom: 20px");
 
 
 function getX(d) {
