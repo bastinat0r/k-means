@@ -24,27 +24,32 @@
 
 <a href="https://github.com/bastinat0r/k-means"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
 
-
+			<div id="floatLeft" style="float: left">
 			<h1>The k-Meaning of Life</h1>
 			<p> Der Clustering Algorithmus k-Means</p> 
 			<p> Datenpunkte, und Prototypen mit Klick setzen, und dann start dr&uuml;cken. </p>
 			<script src="http://d3js.org/d3.v2.js"></script>
-			<button id="start">start</button>
-			<button id="clear">clear</button>
-<br/>
-<br/>
-			<form action="" id="dataType">
-				<input type="RADIO" name="dataType" value="points" checked="true">add datapoints <br/>
-				<input type="RADIO" name="dataType" value="centroids">add centroids
-			</form>
-			<span width="100%" height="100%"> </span>
-			<br/>
-
-
-
+			<div id="controls" style="float: left">
+				<div id="buttons" style="float: left; margin: 20px; vertical-align: middle">
+					<button id="start">start</button>
+					<button id="clear">clear</button>
+				</div>
+				<div id="radios" style="float: right; margin: 20px; vertical-align: middle">
+					<form action="" id="dataType">
+						<input type="RADIO" name="dataType" value="points" checked="true">add datapoints <br/>
+						<input type="RADIO" name="dataType" value="centroids">add centroids
+					</form>
+				</div>
+			</div>
+			</div>
+			<div id="FlattrDiv" style="float: right; margin-top: 150px">
 <a class="FlattrButton" style="display:none;" rev="flattr;button:compact;" href="http://bastinat0r.de/kmeans/"></a>
 <noscript><a href="http://flattr.com/thing/1098089/The-k-Meaning-of-Life" target="_blank">
 <img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" /></a></noscript> 
+			</div>
+			<span width="100%" height="100%"> </span>
+			<br/>
+
 
 
 
