@@ -64,11 +64,11 @@ var centroids = [];
 function randomCoords() {
 	return [Math.floor(Math.random() * (window.innerWidth - 40)), Math.floor(Math.random() * (window.innerHeight - 40))];
 }
-for(var i = 0; i<30; i++) {
+for(var i = 0; i<10; i++) {
 	dataPoints.push(randomCoords());
 }
 
-for(var i = 0; i<3; i++) {
+for(var i = 0; i<6; i++) {
 	var c = randomCoords();
 	c.push(centroids.length);
 	centroids.push(c);
