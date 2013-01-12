@@ -62,7 +62,7 @@ var dataPoints = [];
 var centroids = [];
 
 function randomCoords() {
-	return [Math.floor(Math.random() * (window.innerWidth - 20)), Math.floor(Math.random() * (window.innerHeight - 20))];
+	return [Math.floor(Math.random() * (window.innerWidth - 40)), Math.floor(Math.random() * (window.innerHeight - 40))];
 }
 for(var i = 0; i<30; i++) {
 	dataPoints.push(randomCoords());
@@ -76,8 +76,8 @@ for(var i = 0; i<3; i++) {
 
 var svg = d3.select("span")
 	.append("svg")
-		.attr("height", (window.innerHeight - 20) + "px")
-		.attr("width", (window.innerWidth - 20) + "px")
+		.attr("height", (window.innerHeight - 40) + "px")
+		.attr("width", (window.innerWidth - 40) + "px")
 		.attr("preserveAspectRatio", "none")
 		.attr("style", "border-width: 1px; border-color: #999; border-style: solid; margin-top: 20px; margin-bottom: 20px");
 
