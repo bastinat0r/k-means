@@ -31,7 +31,7 @@
 			<script src="http://d3js.org/d3.v2.js"></script>
 			<div id="controls" style="float: left">
 				<div id="buttons" style="float: left; margin: 20px; vertical-align: middle">
-					<button id="start">start</button>
+					<button id="start">stop</button>
 					<button id="clear">clear</button>
 				</div>
 				<div id="radios" style="float: right; margin: 20px; vertical-align: middle">
@@ -58,13 +58,26 @@
 
 var width = 1000;
 var height = 1000;
-var dataPoints = [[100,100],[200,200]];
-var centroids = [[300,300,0]];
+var dataPoints = [];
+var centroids = [];
+
+function randomCoords() {
+	return [Math.floor(Math.random() * (window.innerWidth - 20)), Math.floor(Math.random() * (window.innerHeight - 20))];
+}
+for(var i = 0; i<30; i++) {
+	dataPoints.push(randomCoords());
+}
+
+for(var i = 0; i<3; i++) {
+	var c = randomCoords();
+	c.push(centroids.length);
+	centroids.push(c);
+}
 
 var svg = d3.select("span")
 	.append("svg")
 		.attr("height", (window.innerHeight - 20) + "px")
-		.attr("width", "100%")
+		.attr("width", (window.innerWidth - 20) + "px")
 		.attr("preserveAspectRatio", "none")
 		.attr("style", "border-width: 1px; border-color: #999; border-style: solid; margin-top: 20px; margin-bottom: 20px");
 
@@ -223,6 +236,10 @@ d3.select("svg").on("click", function() {
 		animate();
 	}
 });
+
+animation = setInterval(kMeans, 3000);
+animate();
+
 		</script>
 	</body>
 </html>
