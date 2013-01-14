@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>The kMeaning of Life</title>
+		<title>The k-Meaning of Life</title>
 
 
 
@@ -42,9 +42,17 @@
 					</form>
 				</div>
 				<div id="buttons2" style="float: right; margin: 20px; vertical-align: middle">
-					<button id="Manhatten">Manhatten</button>
-					<button id="Euklid">Euklid</button>
-					<button id="Unendlich">Unendlich</button>
+					<form action="" id="chooseDistance">
+						<input type="RADIO" name="distanceType" id="Manhatten" value="Manhatten"> Manhatten <br/>
+						<input type="RADIO" name="distanceType" id="Euklid" checked="true" value="Euklid"> Euklid <br/>
+						<input type="RADIO" name="distanceType" id="Unendlich" value="Unendlich"> Unendlich<br/>
+					</form>
+				</div>
+				<div id="algorithm" style="float: right; margin: 20px; vertical-align: middle">
+					<form action="" id="chooseDistance">
+						<input type="RADIO" name="selectAlgorithm" id="kMeans" checked="true" value="k-means"> k-Means <br/>
+						<input type="RADIO" name="selectAlgorithm" id="lvq" value="lvq"> Learning Vector Quantisation<br/>
+					</form>
 				</div>
 			</div>
 			</div>
@@ -66,6 +74,7 @@ var width = 1000;
 var height = 1000;
 var dataPoints = [];
 var centroids = [];
+var lvqLearningRate = 0.2;
 
 function randomCoords() {
 	return [Math.floor(Math.random() * (window.innerWidth - 40)), Math.floor(Math.random() * (window.innerHeight - 40))];
@@ -140,6 +149,9 @@ function animateNewData() {
 }
 
 function animate() {
+
+	d3.select("svg line").transition().duration(700).style("opacity", 0).remove();
+
 	var circles = d3.select("svg").selectAll("circle").data(dataPoints, function(d) {return JSON.stringify(d)}).enter().append("circle");
 	circles.attr("cx", getX)
 		.attr("cy", getY)
@@ -156,17 +168,19 @@ function animate() {
 
 
 	var circles = d3.select("svg").selectAll("circle");
-	
-	circles.transition().delay(0).duration(1000)
+
+	circles.transition().delay(200).duration(500)
 		.attr("cx", getX)
 		.attr("cy", getY)
 		.attr("r", getR)
 	
-	circles.transition().delay(1300).duration(250)
+	circles.transition().delay(800).duration(200)
 		.style("fill", getColor)
 		.style("opacity", getOpacity);
 	
 }
+
+var learningAlgorithm = kMeans;
 
 function kMeans() {
 	
@@ -177,12 +191,39 @@ function kMeans() {
 	for(var i in dataPoints) {
 		worldList[getNextCentroid(dataPoints[i])].push(dataPoints[i]);
 	}
-	updateCentroids(worldList);
+	updateCentroidsKM(worldList);
 	
 	animate();
 }
 
-function updateCentroids(worldList) {
+function lvq() {
+	var i = Math.floor(dataPoints.length * Math.random());
+	d3.select("svg").append("line")
+		.attr("x1", dataPoints[i][0])
+		.attr("y1", dataPoints[i][1])
+		.attr("x2", centroids[getNextCentroid(dataPoints[i])][0])
+		.attr("y2", centroids[getNextCentroid(dataPoints[i])][1])
+		.style("stroke", getColor(dataPoints[i]))
+		.style("stroke-width", 2)
+		.style("opacity", 0.5);
+	
+	
+	updateCentroidsLVQ(i);
+
+	animate();
+}
+
+function updateCentroidsLVQ(index) {
+	var next = getNextCentroid(dataPoints[index]);
+	for(var i in centroids) {
+		if(i == next) {
+			centroids[i][0] += lvqLearningRate * (dataPoints[index][0] - centroids[i][0] );
+			centroids[i][1] += lvqLearningRate * (dataPoints[index][1] - centroids[i][1]);
+		}
+	}
+}
+
+function updateCentroidsKM(worldList) {
 	console.log(JSON.stringify(worldList));
 	for(var i in worldList) {
 		if(worldList[i].length > 0) {
@@ -220,7 +261,7 @@ d3.select("button#clear").on("click", function() {
 d3.select("button#start").on("click", function() {
 	if(animation == null) {
 		d3.select("button#start").text("stop");
-		animation = setInterval(kMeans, 3000);
+		animation = setInterval(learningAlgorithm, 2000);
 		animate();
 	} else {
 		d3.select("button#start").text("start");
@@ -234,14 +275,14 @@ d3.select("button#randomPoints").on("click", function() {
 	animateNewData();
 	if(animation != null) {
 		clearInterval(animation);
-		animation = setInterval(kMeans, 3000);
+		animation = setInterval(learningAlgorithm, 2000);
 		animate();
 	}
 });
 
 d3.select("svg").on("click", function() {
 	coords = d3.svg.mouse(this);
-	if(d3.select("form").select("input").property("checked") == true) {
+	if(d3.select("form").select("input").property("checked")) {
 		dataPoints.push(coords);
 	}
 	else {
@@ -252,30 +293,49 @@ d3.select("svg").on("click", function() {
 
 	if(animation != null) {
 		clearInterval(animation);
-		animation = setInterval(kMeans, 3000);
+		animation = setInterval(learningAlgorithm, 2000);
 		animate();
 	}
 });
 
-d3.select("button#Manhatten").on("click", function() {
+
+d3.select("input#Manhatten").on("click", function() {
 	distance = function(p1, p2) {
 		return Math.abs(p1[0] - p2[0]) + Math.abs(p1[1] - p2[1]); 
 	}
 });
 
-d3.select("button#Euklid").on("click", function() {
+d3.select("input#Euklid").on("click", function() {
 	distance = function(p1, p2) {
 		return (p1[0] - p2[0]) * (p1[0] - p2[0])+ (p1[1] - p2[1]) * (p1[1] - p2[1]);
 	}
 });
 
-d3.select("button#Unendlich").on("click", function() {
+d3.select("input#Unendlich").on("click", function() {
 	distance = function(p1, p2) {
 		return Math.max(Math.abs(p1[0] - p2[0]), Math.abs(p1[1] - p2[1]));
 	}
 });
 
-animation = setInterval(kMeans, 3000);
+d3.select("input#kMeans").on("click", function() {
+	learningAlgorithm = kMeans;
+	if(animation != null) {
+		clearInterval(animation);
+		animation = setInterval(learningAlgorithm, 2000);
+		animate();
+	}
+});
+
+d3.select("input#lvq").on("click", function() {
+	learningAlgorithm = lvq;
+	if(animation != null) {
+		clearInterval(animation);
+		animation = setInterval(learningAlgorithm, 2000);
+		animate();
+	}
+});
+
+animation = setInterval(learningAlgorithm, 2000);
 animate();
 
 		</script>
