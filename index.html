@@ -40,6 +40,11 @@
 						<input type="RADIO" name="dataType" value="centroids">add centroids
 					</form>
 				</div>
+				<div id="buttons2" style="float: right; margin: 20px; vertical-align: middle">
+					<button id="Manhatten">Manhatten</button>
+					<button id="Euklid">Euklid</button>
+					<button id="Unendlich">Unendlich</button>
+				</div>
 			</div>
 			</div>
 			<div id="FlattrDiv" style="float: right; margin-top: 150px">
@@ -234,6 +239,24 @@ d3.select("svg").on("click", function() {
 		clearInterval(animation);
 		animation = setInterval(kMeans, 3000);
 		animate();
+	}
+});
+
+d3.select("button#Manhatten").on("click", function() {
+	distance = function(p1, p2) {
+		return Math.abs(p1[0] - p2[0]) + Math.abs(p1[1] - p2[1]); 
+	}
+});
+
+d3.select("button#Euklid").on("click", function() {
+	distance = function(p1, p2) {
+		return (p1[0] - p2[0]) * (p1[0] - p2[0])+ (p1[1] - p2[1]) * (p1[1] - p2[1]);
+	}
+});
+
+d3.select("button#Unendlich").on("click", function() {
+	distance = function(p1, p2) {
+		return Math.max(Math.abs(p1[0] - p2[0]), Math.abs(p1[1] - p2[1]));
 	}
 });
 
