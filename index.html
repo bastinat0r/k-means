@@ -33,6 +33,7 @@
 				<div id="buttons" style="float: left; margin: 20px; vertical-align: middle">
 					<button id="start">stop</button>
 					<button id="clear">clear</button>
+					<button id="randomPoints">add Points</button>
 				</div>
 				<div id="radios" style="float: right; margin: 20px; vertical-align: middle">
 					<form action="" id="dataType">
@@ -225,6 +226,16 @@ d3.select("button#start").on("click", function() {
 		d3.select("button#start").text("start");
 		clearInterval(animation);
 		animation = null;
+	}
+});
+
+d3.select("button#randomPoints").on("click", function() {
+	addRandomData(10);
+	animateNewData();
+	if(animation != null) {
+		clearInterval(animation);
+		animation = setInterval(kMeans, 3000);
+		animate();
 	}
 });
 
