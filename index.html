@@ -69,9 +69,13 @@ var centroids = [];
 function randomCoords() {
 	return [Math.floor(Math.random() * (window.innerWidth - 40)), Math.floor(Math.random() * (window.innerHeight - 40))];
 }
-for(var i = 0; i<60; i++) {
-	dataPoints.push(randomCoords());
+function addRandomData(n) {
+	for(var i = 0; i < n; i++) {
+		dataPoints.push(randomCoords());
+	}
 }
+
+addRandomData((window.innerHeight -40 )*(window.innerWidth - 40) / 5000);
 
 for(var i = 0; i<6; i++) {
 	var c = randomCoords();
